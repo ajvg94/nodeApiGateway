@@ -16,6 +16,7 @@
 # misc and passwords
 .DS_Store
 .env
+web.config
 
 # logs
 npm-debug.log*
