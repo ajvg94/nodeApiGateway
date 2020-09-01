@@ -1,9 +1,6 @@
 # dependencies
 /node_modules
 
-# ssl-keys
-/ssl
-
 # logs
 /iisnode
 /server.js.debug/

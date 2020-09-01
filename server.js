@@ -1,26 +1,27 @@
 //#region LIBs 
     "Use strict";
-    const authRoute = require("./routes/auth");
     const express = require('express');
     const mongoose = require('mongoose');
     const bodyParser = require('body-parser');
-    require ('dotenv').config();
     const rateLimit = require("express-rate-limit");
     const slowDown = require("express-slow-down");
     const hpp = require('hpp');
     const helmet = require("helmet");
-    var cors = require('cors') ;
+    const cors = require('cors') ;
+    const toobusy = require('toobusy-js');
+    const moment  = require('moment');
+    require ('dotenv').config();
 //#endregion
 //----------------------------------------------------------------------------------------------------------------------
 //#region APP-CONFIG 
 //Express 
     const app = express();
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded());
-    app.enable("trust proxy");
+    app.use(bodyParser.json()); 
+    app.use(bodyParser.urlencoded({extended: true}));
+    app.set('trust proxy',1);
 //DB
     mongoose.connect(process.env.MONGO_DB_URL,{ useUnifiedTopology: true, useNewUrlParser: true},
-        () => console.log('connected'));
+        () => console.log('['+moment().format("YYYY-MM-DD hh:mm:ss")+'] '+'Connected to MongoDB'));
 
 //Rate-limit
     const limiter = rateLimit({
@@ -43,11 +44,13 @@
 //Too Busy
     app.use(function(req, res, next) {
         if (toobusy()) {
+            console.log('['+moment().format("YYYY-MM-DD hh:mm:ss")+'] '+"Server busy try again later.");
             res.send(503, "Server busy try again later.");
         } else {
             next();
         }
     });
+
 //Helmet
     app.use(helmet());
 
@@ -56,13 +59,16 @@
 //#endregion
 //----------------------------------------------------------------------------------------------------------------------
 //RUTAS
+    const authRoute = require("./routes/auth");
+    const protectedRoutes = require("./routes/protected");
     app.use('/api/user', authRoute);
+    app.use('/api/protected', protectedRoutes);
 //----------------------------------------------------------------------------------------------------------------------
     const port = process.env.PORT;
     console.clear();
 //HTTP
     const server = require('http').createServer(app).listen(process.env.PORT, () => {
-        console.log('Listening on: http://localhost:'+process.env.PORT);
+        console.log('['+moment().format("YYYY-MM-DD hh:mm:ss")+'] '+'Server initialized: http://localhost:'+process.env.PORT);
     });
 //HTTPS
     /*const server = https.createServer({
