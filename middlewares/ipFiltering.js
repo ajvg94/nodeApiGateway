@@ -9,14 +9,14 @@
 //----------------------------------------------------------------------------------------------------------------------
 //#region functions 
 module.exports = function (req, res, next) {
-    console.log('['+moment().format("YYYY-MM-DD hh:mm:ss")+'] - ['+req.ip+'] - '+"Verifying IP address...");
+    console.log('['+moment().format("YYYY-MM-DD hh:mm:ss")+'] - ['+req.headers['x-forwarded-for']+'] - '+"Verifying IP address...");
     
-    if(!req.ip) {
+    if(!req.headers['x-forwarded-for']) {
         console.log("Invalid IP address");
         return res.status(403).send("Invalid IP address");
     }
 
-    if(ips.includes(req.ip.toString())){
+    if(ips.includes(req.headers['x-forwarded-for'].toString())){
         console.log("Successfully verified");
         next();
     }else{

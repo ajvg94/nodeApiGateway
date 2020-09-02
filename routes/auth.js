@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 //#region routes 
     router.post('/register', ipFiltering, async(req,res) => {
-        console.log('['+moment().format("YYYY-MM-DD hh:mm:ss")+'] - ['+req.ip+'] - '+"Register user: "+JSON.stringify(req.body));
+        console.log('['+moment().format("YYYY-MM-DD hh:mm:ss")+'] - ['+req.headers['x-forwarded-for']+'] - '+"Register user: "+JSON.stringify(req.body));
 
         //validate user information
         const { error } = validateUser(req.body);
@@ -49,7 +49,7 @@
     });
 
     router.post('/login', async (req,res) => {
-        console.log('['+moment().format("YYYY-MM-DD hh:mm:ss")+'] - ['+req.ip+'] - '+"Login user: "+JSON.stringify(req.body));
+        console.log('['+moment().format("YYYY-MM-DD hh:mm:ss")+'] - ['+req.headers['x-forwarded-for']+'] - '+"Login user: "+JSON.stringify(req.body));
 
         //validate user information
         const { error } = validateUser(req.body);

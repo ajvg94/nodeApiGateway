@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 //#region functions 
     module.exports = function (req, res, next) {
-        console.log('['+moment().format("YYYY-MM-DD hh:mm:ss")+'] - ['+req.ip+'] - '+"Verify token: "+req.header('auth-token'));
+        console.log('['+moment().format("YYYY-MM-DD hh:mm:ss")+'] - ['+req.headers['x-forwarded-for']+'] - '+"Verify token: "+req.header('auth-token'));
         const token = req.header('auth-token');
         if(!token) {
             console.log("Access denied");
